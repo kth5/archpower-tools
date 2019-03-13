@@ -1,14 +1,15 @@
+# POWER Maintainer: Alexander Baldeck <alex.bldck@gmail.com>
 # Contributor: Alexander 'hatred' Drozdov <adrozdoff@gmail.com>
 # Contributor: toha257 <toha257@gmail.com>
 # Contributor: Allan McRae <allan@archlinux.org>
 # Contributor: Bartłomiej Piotrowski <bpiotrowski@archlinux.org>
 # Contributor: Tavian Barnes <tavianator@tavianator.com>
-# Maintainer: Stefan Schmidt <thrimbor.github@gmail.com>
+# AUR Maintainer: Stefan Schmidt <thrimbor.github@gmail.com>
 
 _target_arch=powerpc64le
 _target=${_target_arch}-linux-gnu
 pkgname=${_target}-linux-api-headers
-pkgver=4.17.11
+pkgver=4.20.12
 pkgrel=1
 pkgdesc="Kernel headers sanitized for use in userspace (${_target})"
 arch=(any)
@@ -16,8 +17,8 @@ url='http://www.gnu.org/software/libc'
 license=(GPL2)
 source=(https://www.kernel.org/pub/linux/kernel/v4.x/linux-${pkgver%.*}.tar.xz
         https://www.kernel.org/pub/linux/kernel/v4.x/patch-${pkgver}.xz)
-md5sums=('5bb13a03274b66b56c85b26682e407d7'
-         'd11e0c49f8381d0656f0838310f27a0f')
+md5sums=('d39dd4ba2d5861c54b90d49be19eaf31'
+         '18fa4ebb3fe20e06eaa3cb5a2f4cdbf7')
 validpgpkeys=('ABAF11C65A2970B130ABE3C479BE3E4300411886'   # Linus Torvalds
               '647F28654894E3BD457199BE38DBBDC86092693E')  # Greg Kroah-Hartman
 
