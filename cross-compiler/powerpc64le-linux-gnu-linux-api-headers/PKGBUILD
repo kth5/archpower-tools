@@ -15,27 +15,20 @@ pkgdesc="Kernel headers sanitized for use in userspace (${_target})"
 arch=(any)
 url='http://www.gnu.org/software/libc'
 license=(GPL2)
-source=(https://www.kernel.org/pub/linux/kernel/v4.x/linux-${pkgver%.*}.tar.xz
-        https://www.kernel.org/pub/linux/kernel/v4.x/patch-${pkgver}.xz)
-md5sums=('d39dd4ba2d5861c54b90d49be19eaf31'
-         '18fa4ebb3fe20e06eaa3cb5a2f4cdbf7')
+source=(https://www.kernel.org/pub/linux/kernel/v4.x/linux-${pkgver}.tar.xz)
+md5sums=('edd3015435d60598b99cf6aaf223710e')
 validpgpkeys=('ABAF11C65A2970B130ABE3C479BE3E4300411886'   # Linus Torvalds
               '647F28654894E3BD457199BE38DBBDC86092693E')  # Greg Kroah-Hartman
 
-prepare() {
-  cd linux-${pkgver%.*}
-  patch -p1 -i "$srcdir/patch-$pkgver"
-}
-
 build() {
-  cd linux-${pkgver%.*}
+  cd linux-${pkgver}
 
   make ARCH=powerpc mrproper
   make ARCH=powerpc headers_check
 }
 
 package() {
-  cd linux-${pkgver%.*}
+  cd linux-${pkgver}
   make INSTALL_HDR_PATH="$pkgdir/usr/$_target" ARCH=powerpc headers_install
 
   # use headers from libdrm
