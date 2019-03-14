@@ -1,0 +1,30 @@
+#!/bin/bash
+source PKGBUILD
+source /etc/makepkg.conf
+source /usr/share/makepkg/util/message.sh
+
+[ ! -z "${PACKAGER}" ] && \
+	sed -i "1i# POWER Maintainer: ${PACKAGER}" PKGBUILD
+
+if [ ! ${arch} = 'any' ]; then
+	sed -i 's@arch=.*@arch=(x86_64 powerpc64le)@g' PKGBUILD
+fi
+
+for key in ${validpgpkeys[@]}; do
+	gpg --keyserver keyserver.ubuntu.com --recv-keys ${key} 2>/dev/null
+done
+
+
+# warn packages that can't exist build for non-x86
+WARN_PKGS=(nasm yasm)
+for pkg in ${depends[@]}; do
+	for warn_pkg in ${WARN_PKGS[@]}; do
+		[ ${pkg} = ${warn_pkg} ] && warning ":: ${pkg} in depends can't build with/for ${CHOST}!"
+	done	
+done
+
+for pkg in ${makedepends[@]}; do
+	for warn_pkg in ${WARN_PKGS[@]}; do
+		[ ${pkg} = ${warn_pkg} ] && warning ":: ${pkg} in makedepends can't build with/for ${CHOST}!"
+	done	
+done
