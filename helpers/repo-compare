@@ -5,8 +5,11 @@ source /usr/share/makepkg/util/message.sh
 OUR_REPO=$1
 THEIR_REPO=$2
 
+NEWER_ONLY=$3
+[ -z "${NEWER_ONLY}" ] && NEWER_ONLY=0
+
 usage() {
-  warning "$0 <our_repo_dir> <their_repo_dir>"
+  warning "$0 <our_repo_dir> <their_repo_dir> [new only? 1/0]"
   exit 0
 }
 
@@ -61,6 +64,7 @@ for _pkg in ${_our_pkgs[@]}; do
         warning "${_our_pkgname} is newer in their repo: ours=${_our_pkgver} theirs=${pkgver}-${pkgrel}"
         ;;
       '1')
+	[ ${NEWER_ONLY} -eq 1 ] && continue
         warning "${_our_pkgname} is newer in our repo: ours=${_our_pkgver} theirs=${pkgver}-${pkgrel}"
         ;;
     esac
