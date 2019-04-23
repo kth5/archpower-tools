@@ -1,0 +1,69 @@
+#!/usr/bin/bash
+
+source /usr/share/makepkg/util/message.sh
+
+OUR_REPO=$1
+THEIR_REPO=$2
+
+usage() {
+  warning "$0 <our_repo_dir> <their_repo_dir>"
+  exit 0
+}
+
+if [ -z "${OUR_REPO}" ]; then
+  usage
+  exit 1
+fi
+
+if [ ! -d ${OUR_REPO} ]; then
+  error "${OUR_REPO} does not exist or is not a directory"
+  exit 2
+fi
+
+if [ -z "${THEIR_REPO}" ]; then
+  usage
+  exit 1
+fi
+
+if [ ! -d ${THEIR_REPO} ]; then
+  error "${THEIR_REPO} does not exist or is not a directory"
+  exit 2
+fi
+
+THEIR_REPO=$(echo ${THEIR_REPO} | sed 's@\/\/@/@g')
+
+[ -f /tmp/.repo_compare.db ] && rm -fv /tmp/.repo_compare.db
+sqlite3 /tmp/.repo_compare.db "CREATE TABLE our_repo ( pkgname TEXT, version TEXT );"
+
+_our_pkgbuilds=$(find ${OUR_REPO} -type f -name PKGBUILD)
+for _our_pkgbuild in ${_our_pkgbuilds[@]}; do
+  _pkgbuild=$(echo ${_our_pkgbuild} | sed "s@${OUR_REPO}@@g")
+  _pkgname=$(dirname $_pkgbuild)
+  source ${_our_pkgbuild}
+  sqlite3 /tmp/.repo_compare.db "INSERT INTO \`our_repo\` VALUES ('${_pkgname}', '${pkgver}-${pkgrel}');"
+  unset pkgver
+  unset pkgname
+  unset _pkgbuild
+  unset _pkgname
+done
+unset _our_pkgbuilds
+
+
+_our_pkgs=$(sqlite3 -separator ';' /tmp/.repo_compare.db "SELECT * FROM our_repo ORDER BY pkgname")
+for _pkg in ${_our_pkgs[@]}; do
+  _our_pkgname=${_pkg%%;*}
+  _our_pkgver=${_pkg#*;}
+  if [ -f ${THEIR_REPO}${_our_pkgname}/trunk/PKGBUILD ]; then
+    source ${THEIR_REPO}${_our_pkgname}/trunk/PKGBUILD
+    _cmp=$(vercmp "${_our_pkgver}" "${pkgver}-${pkgrel}")
+    case ${_cmp} in
+      '-1')
+        warning "${_our_pkgname} is newer in their repo: ours=${_our_pkgver} theirs=${pkgver}-${pkgrel}"
+        ;;
+      '1')
+        warning "${_our_pkgname} is newer in our repo: ours=${_our_pkgver} theirs=${pkgver}-${pkgrel}"
+        ;;
+    esac
+  fi
+done
+
