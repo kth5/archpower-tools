@@ -5,7 +5,8 @@ source /etc/makepkg.conf
 EXTRA_VOLUMES=""
 [ ! -z "${PKGDEST}" ] && EXTRA_VOLUMES="-v ${PKGDEST}:${PKGDEST}"
 [ ! -z "${SRCDEST}" ] && EXTRA_VOLUMES="${EXTRA_VOLUMES} -v ${SRCDEST}:${SRCDEST}"
-set -x
+[ -d ${HOME}/.gnupg/ ] && EXTRA_VOLUMES="${EXTRA_VOLUMES} -v  ${HOME}/.gnupg:/home/builder/.gnupg:ro"
+
 docker run \
    --name $(basename `pwd`)_builder \
    --rm \
@@ -16,4 +17,4 @@ docker run \
    -w /build \
    --user 1000:1000 \
    kth5/archpower-builder:latest \
-   sudo pacman -Syu --noconfirm && makepkg -csrf --noconfirm $@
+   domakepkg-real $@
