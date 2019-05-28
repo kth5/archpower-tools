@@ -7,12 +7,18 @@ EXTRA_VOLUMES=""
 [ ! -z "${SRCDEST}" ] && EXTRA_VOLUMES="${EXTRA_VOLUMES} -v ${SRCDEST}:${SRCDEST}"
 [ -d ${HOME}/.gnupg/ ] && EXTRA_VOLUMES="${EXTRA_VOLUMES} -v  ${HOME}/.gnupg:/home/builder/.gnupg:ro"
 
+MAKEPKGCONF=/etc/makepkg.conf
+[ -f /etc/makepkg.conf.ppc64le ] && MAKEPKGCONF=/etc/makepkg.conf.ppc64le
+
+PACMANCONF=/etc/pacman.conf
+[ -f /etc/pacman.conf.ppc64le ] && MAKEPKGCONF=/etc/pacman.conf.ppc64le
+
 docker run \
    --name $(basename `pwd`)_builder \
    --rm \
    -v $(pwd):/build \
-   -v /etc/makepkg.conf:/etc/makepkg.conf:ro \
-   -v /etc/pacman.conf:/etc/pacman.conf:ro  ${EXTRA_VOLUMES} \
+   -v ${MAKEPKGCONF}:/etc/makepkg.conf:ro \
+   -v ${PACMANCONF}:/etc/pacman.conf:ro  ${EXTRA_VOLUMES} \
    -v /var/cache/pacman:/var/cache/pacman \
    -w /build \
    --user 1000:1000 \
