@@ -1,0 +1,19 @@
+#!/bin/bash
+
+source /etc/makepkg.conf
+
+EXTRA_VOLUMES=""
+[ ! -z "${PKGDEST}" ] && EXTRA_VOLUMES="-v ${PKGDEST}:${PKGDEST}"
+[ ! -z "${SRCDEST}" ] && EXTRA_VOLUMES="${EXTRA_VOLUMES} -v ${SRCDEST}:${SRCDEST}"
+set -x
+docker run \
+   --name $(basename `pwd`)_builder \
+   --rm \
+   -v $(pwd):/build \
+   -v /etc/makepkg.conf:/etc/makepkg.conf:ro \
+   -v /etc/pacman.conf:/etc/pacman.conf:ro  ${EXTRA_VOLUMES} \
+   -v /var/cache/pacman:/var/cache/pacman \
+   -w /build \
+   --user 1000:1000 \
+   kth5/archpower-builder:latest \
+   sudo pacman -Syu --noconfirm && makepkg -csrf --noconfirm $@
