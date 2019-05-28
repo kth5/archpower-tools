@@ -7,7 +7,6 @@ EXTRA_VOLUMES=""
 [ ! -z "${SRCDEST}" ] && EXTRA_VOLUMES="${EXTRA_VOLUMES} -v ${SRCDEST}:${SRCDEST}"
 [ -d ${HOME}/.gnupg/ ] && EXTRA_VOLUMES="${EXTRA_VOLUMES} -v  ${HOME}/.gnupg:/home/builder/.gnupg:ro"
 
-set -x
 MAKEPKGCONF=/etc/makepkg.conf
 [ -f /etc/makepkg.conf.ppc64le ] && MAKEPKGCONF=/etc/makepkg.conf.ppc64le
 
