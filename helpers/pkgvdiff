@@ -1,0 +1,31 @@
+#!/bin/bash
+THEIR_REPO=${HOME}/arch/packages
+THEIR_COMMUNITY=${HOME}/arch/community
+
+_mypkg=$(basename `pwd`)
+_pkgbuild=''
+
+source PKGBUILD
+_our_ver="${pkgver}-${pkgrel}"
+[ ! -z "${epoch}" ] && _our_ver="${epoch}:${_our_ver}"
+
+[ -f ${THEIR_REPO}/${_mypkg}/trunk/PKGBUILD ] \
+  && _pkgbuild=${THEIR_REPO}/${_mypkg}/trunk/PKGBUILD
+
+[ -f ${THEIR_COMMUNITY}/${_mypkg}/trunk/PKGBUILD ] \
+  && _pkgbuild=${THEIR_COMMUNITY}/${_mypkg}/trunk/PKGBUILD 
+
+if [ -z "${_pkgbuild}" ]; then
+	exit 1
+fi
+
+
+source ${_pkgbuild}
+_their_ver="${pkgver}-${pkgrel}"
+
+[ ! -z "${epoch}" ] && _their_ver="${epoch}:${_their_ver}"
+
+result=$(vercmp ${_our_ver} ${_their_ver})
+if [ ${result} -lt 0 ]; then
+	echo ":: ${pkgname} is outdated: ${_our_ver} < ${_their_ver}"
+fi

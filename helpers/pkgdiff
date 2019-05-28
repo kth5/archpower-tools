@@ -1,0 +1,12 @@
+#!/bin/bash
+
+THEIR_REPO=${HOME}/arch/packages
+THEIR_COMMUNITY=${HOME}/arch/community
+
+_mypkg=$(basename `pwd`)
+
+[ -f ${THEIR_REPO}/${_mypkg}/trunk/PKGBUILD ] \
+  && diff ${THEIR_REPO}/${_mypkg}/trunk/PKGBUILD PKGBUILD
+
+[ -f ${THEIR_COMMUNITY}/${_mypkg}/trunk/PKGBUILD ] \
+  && diff ${THEIR_COMMUNITY}/${_mypkg}/trunk/PKGBUILD PKGBUILD
