@@ -6,6 +6,7 @@ EXTRA_VOLUMES=""
 [ ! -z "${PKGDEST}" ] && EXTRA_VOLUMES="-v ${PKGDEST}:${PKGDEST}"
 [ ! -z "${SRCDEST}" ] && EXTRA_VOLUMES="${EXTRA_VOLUMES} -v ${SRCDEST}:${SRCDEST}"
 [ -d ${HOME}/.gnupg/ ] && EXTRA_VOLUMES="${EXTRA_VOLUMES} -v  ${HOME}/.gnupg:/home/builder/.gnupg:ro"
+[ -d ${HOME}/.ccache/ ] && EXTRA_VOLUMES="${EXTRA_VOLUMES} -v ${HOME}/.ccache:/home/builder/.ccache"
 
 MAKEPKGCONF=/etc/makepkg.conf
 [ -f /etc/makepkg.conf.ppc64le ] && MAKEPKGCONF=/etc/makepkg.conf.ppc64le
