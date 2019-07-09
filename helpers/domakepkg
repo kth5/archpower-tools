@@ -14,10 +14,13 @@ MAKEPKGCONF=/etc/makepkg.conf
 PACMANCONF=/etc/pacman.conf
 [ -f /etc/pacman.conf.ppc64le ] && PACMANCONF=/etc/pacman.conf.ppc64le
 
-docker pull kth5/archpower-builder:latest
+#docker pull kth5/archpower-builder:latest
+
+CONTAINER_NAME=$(basename `pwd`)
+CONTAINER_NAME=${CONTAINER_NAME//+/}
 
 docker run \
-   --name $(basename `pwd`)_builder \
+   --name ${CONTAINER_NAME}_builder \
    --rm \
    -v $(pwd):/build \
    -v ${MAKEPKGCONF}:/etc/makepkg.conf:ro \
