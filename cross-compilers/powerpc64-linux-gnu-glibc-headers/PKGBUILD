@@ -14,8 +14,8 @@ pkgdesc="GNU C Library headers (${_target})"
 arch=('any')
 url="http://www.gnu.org/software/libc/"
 license=(GPL LGPL)
-depends=("${_target}-linux-api-headers>=4.20.12-1")
-makedepends=("${_target}-gcc-stage1>=8.2.1")
+depends=("${_target}-linux-api-headers>=5.2.8-1")
+makedepends=("${_target}-gcc-stage1>=9.1.0")
 options=(!buildflags !strip staticlibs)
 _commit=5a74abda201907cafbdabd1debf98890313ff71e
 source=(git+https://sourceware.org/git/glibc.git#commit=$_commit
