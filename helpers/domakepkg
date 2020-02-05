@@ -5,8 +5,9 @@ source /etc/makepkg.conf
 EXTRA_VOLUMES=""
 [ ! -z "${PKGDEST}" ] && EXTRA_VOLUMES="-v ${PKGDEST}:${PKGDEST}"
 [ ! -z "${SRCDEST}" ] && EXTRA_VOLUMES="${EXTRA_VOLUMES} -v ${SRCDEST}:${SRCDEST}"
-[ -d ${HOME}/.gnupg/ ] && EXTRA_VOLUMES="${EXTRA_VOLUMES} -v  ${HOME}/.gnupg:/home/builder/.gnupg:ro"
+[ -d ${HOME}/.gnupg/ ] && EXTRA_VOLUMES="${EXTRA_VOLUMES} -v  ${HOME}/.gnupg:/home/builder/.gnupg"
 [ -d ${HOME}/.ccache/ ] && EXTRA_VOLUMES="${EXTRA_VOLUMES} -v ${HOME}/.ccache:/home/builder/.ccache"
+[ -f ${HOME}/.gitconfig ] && EXTRA_VOLUMES="${EXTRA_VOLUMES} -v ${HOME}/.gitconfig:/home/builder/.gitconfig:ro" 
 
 MAKEPKGCONF=/etc/makepkg.conf
 [ -f /etc/makepkg.conf.ppc64le ] && MAKEPKGCONF=/etc/makepkg.conf.ppc64le
@@ -17,8 +18,14 @@ PACMANCONF=/etc/pacman.conf
 CONTAINER_NAME=$(basename `pwd`)
 CONTAINER_NAME=${CONTAINER_NAME//+/}
 
+[ ! -z "${DOCKER_CPUS}" ] && DOCKER_CPUS="--cpuset-cpus=${DOCKER_CPUS}"
+
+source PKGBUILD
+if [ "${docker_priv}" == 1 ]; then
+  DOCKER_PRIV_FLAGS="--privileged --cap-add=SYS_PTRACE --security-opt apparmor:unconfined"
+fi
+
 docker run \
-   --privileged \
    --name ${CONTAINER_NAME}_builder \
    --rm \
    -e "SHELL=/bin/bash" \
@@ -28,6 +35,8 @@ docker run \
    -v /var/cache/pacman:/var/cache/pacman \
    -w /build \
    --user 1000:1000 \
-   -ti \
+   -ti ${DOCKER_CPUS} ${DOCKER_PRIV_FLAGS} \
    kth5/archpower-builder:latest \
    domakepkg-real $@
+
+exit $?
