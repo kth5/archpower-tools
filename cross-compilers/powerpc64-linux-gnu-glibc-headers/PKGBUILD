@@ -8,7 +8,7 @@
 
 _target="powerpc64-linux-gnu"
 pkgname=${_target}-glibc-headers
-pkgver=2.29
+pkgver=2.31
 pkgrel=1
 pkgdesc="GNU C Library headers (${_target})"
 arch=('any')

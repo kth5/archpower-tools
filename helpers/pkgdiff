@@ -1,7 +1,7 @@
 #!/bin/bash
 
-THEIR_REPO=${HOME}/arch/packages
-THEIR_COMMUNITY=${HOME}/arch/community
+THEIR_REPO=${HOME}/code/arch/packages
+THEIR_COMMUNITY=${HOME}/code/arch/community
 
 _mypkg=$(basename `pwd`)
 

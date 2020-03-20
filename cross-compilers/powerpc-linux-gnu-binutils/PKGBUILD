@@ -7,9 +7,9 @@
 # Contributor: Tavian Barnes <tavianator@tavianator.com>
 # Maintainer: Stefan Schmidt <thrimbor.github@gmail.com>
 
-_target="powerpc-linux-gnu"
+_target="powerpc-unknown-linux-gnu"
 pkgname=${_target}-binutils
-pkgver=2.32
+pkgver=2.34
 pkgrel=1
 pkgdesc="A set of programs to assemble and manipulate binary and object files (${_target})"
 arch=(x86_64 powerpc64le)
@@ -20,8 +20,8 @@ checkdepends=(dejagnu bc)
 options=(staticlibs !distcc !ccache)
 source=(https://ftp.gnu.org/gnu/binutils/binutils-$pkgver.tar.xz{,.sig})
 validpgpkeys=(3A24BC1E8FB409FA9F14371813FCEF89DD9E3C4F)
-md5sums=('0d174cdaf85721c5723bf52355be41e6'
-         'SKIP')
+sha256sums=('f00b0e8803dc9bab1e2165bd568528135be734df3fabf8d0161828cd56028952'
+            'SKIP')
 
 prepare() {
   mkdir -p binutils-build
@@ -78,6 +78,7 @@ package() {
   # Remove unwanted files
   rm -rf "$pkgdir/usr/share"
   rm -f "$pkgdir/usr/bin/"{ar,as,ld,nm,objdump,ranlib,readelf,strip,objcopy}
-
+  rm -vf ${pkgdir}/usr/include/ctf*.h
+  rm -vf ${pkgdir}/usr/lib/libctf*
   rm -rf ${pkgdir}/usr/lib/ldscripts
 }

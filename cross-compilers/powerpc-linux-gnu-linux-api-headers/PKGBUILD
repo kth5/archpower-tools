@@ -7,16 +7,16 @@
 # AUR Maintainer: Stefan Schmidt <thrimbor.github@gmail.com>
 
 _target_arch=powerpc
-_target=${_target_arch}-linux-gnu
+_target=${_target_arch}-unknown-linux-gnu
 pkgname=${_target}-linux-api-headers
-pkgver=5.2.8
+pkgver=5.4.17
 pkgrel=1
 pkgdesc="Kernel headers sanitized for use in userspace (${_target})"
 arch=(any)
 url='http://www.gnu.org/software/libc'
 license=(GPL2)
 source=(https://www.kernel.org/pub/linux/kernel/v4.x/linux-${pkgver}.tar.xz)
-md5sums=('602dd0ecb8646e539fefb2beb6eb6fe0')
+sha256sums=('945f2bf6af69eed0ac81ef75b571f37ae1e16a9bb8a2ae698a365ee3ec2c74b9')
 validpgpkeys=('ABAF11C65A2970B130ABE3C479BE3E4300411886'   # Linus Torvalds
               '647F28654894E3BD457199BE38DBBDC86092693E')  # Greg Kroah-Hartman
 
