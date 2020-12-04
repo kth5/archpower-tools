@@ -1,0 +1,23 @@
+#!/usr/bin/bash
+
+[ ! -f PKGBUILD ] && exit 0
+
+source /etc/makepkg.conf
+source PKGBUILD
+
+if [ ! "${arch}" = "any" ]; then
+   arch=${CARCH} 
+fi
+
+if [ -z "${pkgbase}" ]; then
+  _epoch=''
+  [ ! -z "${epoch}" ] && _epoch="${epoch}:"
+  echo ${pkgname}-${_epoch}${pkgver}-${pkgrel}-${arch}.pkg.tar.zst
+else
+  for pkg in ${pkgname[@]}; do
+    _epoch=''
+    [ ! -z "${epoch}" ] && _epoch="${epoch}:"
+    echo -n "${pkg}-${_epoch}${pkgver}-${pkgrel}-${arch}.pkg.tar.zst "
+  done
+  echo ''
+fi

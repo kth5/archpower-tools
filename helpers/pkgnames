@@ -1,0 +1,18 @@
+#!/usr/bin/bash
+
+[ ! -f PKGBUILD ] && exit 0
+
+source /etc/makepkg.conf
+source PKGBUILD
+
+if [ ! "${arch}" = "any" ]; then
+   arch=${CARCH} 
+fi
+
+if [ -z "${pkgbase}" ]; then
+  echo ${pkgname}
+else
+  for pkg in ${pkgname[@]}; do
+    echo "${pkg}"
+  done
+fi
