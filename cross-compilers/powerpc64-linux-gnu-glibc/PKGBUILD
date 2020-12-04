@@ -8,14 +8,14 @@
 
 _target="powerpc64-linux-gnu"
 pkgname=${_target}-glibc
-pkgver=2.29
+pkgver=2.32
 pkgrel=1
 pkgdesc="GNU C Library (${_target})"
 arch=('any')
 url="http://www.gnu.org/software/libc/"
 license=(GPL LGPL)
-depends=("${_target}-linux-api-headers>=5.2.8-1")
-makedepends=("${_target}-gcc-stage1>=9.1.0")
+depends=("${_target}-linux-api-headers>=5.9-1")
+makedepends=("${_target}-gcc-stage1>=10.2.0" python)
 provides=("${_target}-glibc-headers=${pkgver}" "${_target}-eglibc")
 conflicts=("${_target}-glibc-headers" "${_target}-eglibc")
 replaces=("${_target}-glibc-headers")

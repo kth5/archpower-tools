@@ -9,7 +9,7 @@
 _target_arch=powerpc64
 _target=${_target_arch}-linux-gnu
 pkgname=${_target}-linux-api-headers
-pkgver=5.3.1
+pkgver=5.9
 pkgrel=1
 pkgdesc="Kernel headers sanitized for use in userspace (${_target})"
 arch=(any)
@@ -17,7 +17,7 @@ url='http://www.gnu.org/software/libc'
 license=(GPL2)
 makedepends=(rsync make)
 source=(https://www.kernel.org/pub/linux/kernel/v5.x/linux-${pkgver}.tar.xz)
-md5sums=('4c68633ce304b8fbc7be2d3452060c11')
+sha256sums=('3239a4ee1250bf2048be988cc8cb46c487b2c8a0de5b1b032d38394d5c6b1a06')
 validpgpkeys=('ABAF11C65A2970B130ABE3C479BE3E4300411886'   # Linus Torvalds
               '647F28654894E3BD457199BE38DBBDC86092693E')  # Greg Kroah-Hartman
 
@@ -37,4 +37,8 @@ package() {
 
   # clean-up unnecessary files generated during install
   find ${pkgdir} \( -name .install -o -name ..install.cmd \) -delete
+
+  # seems nothing properly fixes permissions
+  find "$pkgdir/usr/${_target}/include" -type d -exec chmod 0755 {} \;
+  find "$pkgdir/usr/${_target}/include" -type f -exec chmod 0644 {} \;
 }
