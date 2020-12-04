@@ -7,7 +7,7 @@ source /usr/share/makepkg/util/message.sh
 	sed -i "1i# POWER Maintainer: ${PACKAGER}" PKGBUILD
 
 if [ ! ${arch} = 'any' ]; then
-	sed -i 's@arch=.*@arch=(x86_64 powerpc64le)@g' PKGBUILD
+	sed -i 's@^arch=.*@arch=(x86_64 powerpc64le)@g' PKGBUILD
 fi
 
 for key in ${validpgpkeys[@]}; do
@@ -15,8 +15,8 @@ for key in ${validpgpkeys[@]}; do
 done
 
 
-# warn packages that can't exist build for non-x86
-WARN_PKGS=(nasm yasm)
+# warn packages that can't build/work for non-x86
+WARN_PKGS=(nasm yasm fwupd luajit)
 for pkg in ${depends[@]}; do
 	for warn_pkg in ${WARN_PKGS[@]}; do
 		[ ${pkg} = ${warn_pkg} ] && warning ":: ${pkg} in depends can't build with/for ${CHOST}!"

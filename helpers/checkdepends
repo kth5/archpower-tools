@@ -1,19 +1,5 @@
 #!/bin/bash
-source PKGBUILD
-
-TMPDIR=$(mktemp -d)
-
-if [ -z "${1}" ]; then
-
-cd /home/kth5/code/archpower
-  dirvdiff > ${TMPDIR}/updates.txt
-  FILE=${TMPDIR}/updates.txt
-else
-  FILE=$1  
-fi
-
-for pkg in ${depends} ${makedepends} ${checkdepends}; do
-  grep " ${pkg} " ${FILE};
+source PKGBUILD;
+for pkg in ${depends[@]} ${makedepends[@]} ${checkdepends[@]}; do
+  grep ":: ${pkg} " ~/updates.txt;
 done
-
-rm -rf ${TMPDIR}
