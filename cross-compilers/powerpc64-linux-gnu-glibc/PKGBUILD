@@ -8,28 +8,22 @@
 
 _target="powerpc64-linux-gnu"
 pkgname=${_target}-glibc
-pkgver=2.32
+pkgver=2.33
 pkgrel=1
 pkgdesc="GNU C Library (${_target})"
 arch=('any')
 url="http://www.gnu.org/software/libc/"
 license=(GPL LGPL)
-depends=("${_target}-linux-api-headers>=5.9-1")
+depends=("${_target}-linux-api-headers>=5.10-1")
 makedepends=("${_target}-gcc-stage1>=10.2.0" python)
 provides=("${_target}-glibc-headers=${pkgver}" "${_target}-eglibc")
 conflicts=("${_target}-glibc-headers" "${_target}-eglibc")
 replaces=("${_target}-glibc-headers")
 options=(!buildflags !strip staticlibs)
-_commit=067fc32968b601493f4b247a3ac00caeea3f3d61
-source=(git+https://sourceware.org/git/glibc.git#commit=$_commit
-        bz20338.patch
-        0001-Revert-elf-Correct-absolute-SHN_ABS-symbol-run-time-.patch
-        powerpc-hack.patch)
+_commit=9826b03b747b841f5fc6de2054bf1ef3f5c4bdf3
+source=("git+https://sourceware.org/git/glibc.git#commit=$_commit")
 validpgpkeys=(7273542B39962DF7B299931416792B4EA25340F8) # Carlos O'Donell
-md5sums=('SKIP'
-         'dc0d3ad59aeaaf591b085a77de6e03e9'
-         'af5d3c5227ac639effe39667a43879a1'
-         'a9b17e09ef60bf70df313c7baad64789')
+sha256sums=('SKIP')
 
 prepare() {
   mkdir -p glibc-build
@@ -59,6 +53,8 @@ build() {
       --enable-stackguard-randomization
       --disable-profile
       --disable-werror
+      --with-pkgversion="ArchPOWER GLIBC ${pkgver}"
+      --enable-kernel=4.4
   )
 
   cd glibc-build
@@ -74,8 +70,9 @@ build() {
   export BUILD_CC=gcc
   export CC=${_target}-gcc
   export CXX=${_target}-g++
-  export AR=${_target}-ar
-  export RANLIB=${_target}-ranlib
+  export AR=${CHOST}-ar
+  export LD=${CHOST}-ld
+  export RANLIB=${CHOST}-ranlib
 
   unset LD_LIBRARY_PATH
 
