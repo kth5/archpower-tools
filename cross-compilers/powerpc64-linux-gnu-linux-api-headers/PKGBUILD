@@ -9,7 +9,7 @@
 _target_arch=powerpc64
 _target=${_target_arch}-linux-gnu
 pkgname=${_target}-linux-api-headers
-pkgver=5.9
+pkgver=5.10.13
 pkgrel=1
 pkgdesc="Kernel headers sanitized for use in userspace (${_target})"
 arch=(any)
@@ -17,7 +17,7 @@ url='http://www.gnu.org/software/libc'
 license=(GPL2)
 makedepends=(rsync make)
 source=(https://www.kernel.org/pub/linux/kernel/v5.x/linux-${pkgver}.tar.xz)
-sha256sums=('3239a4ee1250bf2048be988cc8cb46c487b2c8a0de5b1b032d38394d5c6b1a06')
+sha256sums=('06698c0ce35ceefa9b79ceb108ec7fb86de05f51fe615f3ae5cc82e293dfe1f2')
 validpgpkeys=('ABAF11C65A2970B130ABE3C479BE3E4300411886'   # Linus Torvalds
               '647F28654894E3BD457199BE38DBBDC86092693E')  # Greg Kroah-Hartman
 
