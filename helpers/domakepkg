@@ -20,7 +20,7 @@ CONTAINER_NAME=${CONTAINER_NAME//+/}
 
 source PKGBUILD
 if [ "${docker_priv}" == 1 ]; then
-  DOCKER_PRIV_FLAGS="--privileged --cap-add=SYS_PTRACE --security-opt apparmor:unconfined --security-opt seccomp:unconfined"
+  DOCKER_PRIV_FLAGS="--privileged --cap-add=SYS_PTRACE"
 fi
 
 docker run \
@@ -28,12 +28,14 @@ docker run \
    --rm \
    -e "SHELL=/bin/bash" \
    -v $(pwd):/build \
-   -v ${MAKEPKGCONF}:/etc/makepkg.conf:ro \
-   -v ${PACMANCONF}:/etc/pacman.conf:ro  ${EXTRA_VOLUMES} \
+   -v ${MAKEPKGCONF}:/etc/makepkg.conf:rw \
+   -v ${PACMANCONF}:/etc/pacman.conf:rw ${EXTRA_VOLUMES} \
    -v /var/cache/pacman:/var/cache/pacman \
+   -v /var/log/journal/remote:/var/log/journal/remote \
    -w /build \
    --user 1000:1000 \
-   -ti ${DOCKER_FLAGS} ${DOCKER_PRIV_FLAGS} \
+   -ti ${DOCKER_FLAGS} \
+   --security-opt apparmor:unconfined --security-opt seccomp:unconfined ${DOCKER_PRIV_FLAGS} \
    kth5/archpower-builder:latest \
    domakepkg-real $@
 
