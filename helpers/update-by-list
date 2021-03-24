@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# Author: Alexander Baldeck
+# License: I-DONT-GIVE-A-FLYING-RATS-ASS
+# 
+# This script takes a file as argument, each line represents a foldername containing a PKGBUILD.
+# It'll CD into it, and check if all package files have been built and if not, it'll attempt to
+# do so and add them to repo-local.db.tar.zst in ${HOME}/repo.
+# 
+# It assumes:
+# * pacman.conf has been configured accordingly.
+# * you have a local mirror of the repositories used and 
+#   can safely clear pacman's cache after each build
+# * sudo works passwordless to control pacman
+# * docker is installed
+# * you have archpower-tools/helpers in ${PATH}
+
+PWD=$(pwd)
+
+for pkg in $(cat "${1}"); do
+  (
+   if [ -d ${pkg} ]; then
+    cd ${pkg}
+    build=0
+    
+    # check if packages have been built before
+    # requires github.com/kth5/archpower-tools/helpers in path
+    for pkgfile in $(pkgfiles); do
+      [ -f ${HOME}/repo/${pkgfile} ] && build=1
+    done
+
+    if [ $build -eq 0 ]; then
+      sudo pacman -Scc --noconfirm
+      domakepkg -cs --nocheck -f
+      for pkgfile in $(pkgfiles); do
+        /usr/bin/repo-add ${HOME}/repo/repo-local.db.tar.zst ${HOME}/repo/${pkgfile}
+      done
+      cd ${PWD}
+    else
+      echo ":: ${pkg} has been built. Skipping..."
+    fi
+  fi
+ )
+done
