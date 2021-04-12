@@ -3,11 +3,21 @@ source PKGBUILD
 source /etc/makepkg.conf
 source /usr/share/makepkg/util/message.sh
 
-[ ! -z "${PACKAGER}" ] && \
+_myarch=${CARCH}
+
+if [ -z $(printf '%s\n' "${arch[@]}" | grep "^${_myarch}$") ]; then
+  _hasarch="${arch[@]} ${_myarch}"
+else
+  _hasarch="${arch[@]}"
+fi
+
+_hasmaintainer=$(grep '# POWER Maintainer:' PKGBUILD | wc -l)
+
+[ ! -z "${PACKAGER}" -a ${_hasmaintainer} -lt 1 ] && \
 	sed -i "1i# POWER Maintainer: ${PACKAGER}" PKGBUILD
 
 if [ ! ${arch} = 'any' ]; then
-	sed -i 's@^arch=.*@arch=(x86_64 powerpc64le)@g' PKGBUILD
+	sed -i "s@^arch=.*@arch=(${_hasarch})@g" PKGBUILD
 fi
 
 for key in ${validpgpkeys[@]}; do
