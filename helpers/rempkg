@@ -52,7 +52,7 @@ for _arch in ${arch[@]}; do
     continue
   fi
 
-  rsync -r $(pwd) ${_bot}:archpower/pkg
+  rsync -r --exclude=out/ $(pwd) ${_bot}:archpower/pkg
   ssh ${_bot} "cd archpower/pkg/${pkgname}; ${_makechrootpkg_prefix} makechrootpkg -cu -r \${HOME}/archpower/buildroot"
   rsync ${_bot}:archpower/pkg/${pkgname}/*.pkg.tar.zst \
              ${_bot}:archpower/pkg/${pkgname}/*.log out/
