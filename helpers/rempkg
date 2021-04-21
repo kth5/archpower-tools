@@ -1,0 +1,60 @@
+#!/bin/bash
+
+source /usr/share/makepkg/util.sh
+
+buildbot_powerpc64le=(
+  'buildbot@192.168.122.131'
+)
+
+buildbot_powerpc=(
+  'buildbot@192.168.122.250'
+)
+
+if [ ! -f PKGBUILD ]; then
+  error "No PKGBUILD!"
+  exit 1
+fi
+
+source PKGBUILD
+
+for _arch in ${arch[@]}; do
+  _skip_arch=0
+  unset _bot
+  unset _makechrootpkg_prefix
+  case ${_arch} in
+    powerpc64le|any)
+      _bot=${buildbot_powerpc64le}
+    ;;
+    powerpc)
+      _bot=${buildbot_powerpc}
+      _makechrootpkg_prefix="ppc32"
+    ;;
+    *) 
+      msg "Skipping ${_arch}, no available buildbot for this architecture."
+      _skip_arch=1
+    ;;
+  esac
+
+  [ ${_skip_arch} -eq 1 ] && continue
+
+  [ ! -z "${pkgbase}" ] && pkgname=${pkgbase} 
+
+  mkdir -p out
+
+  _skip_build=0
+  _pkgfiles=$(pkgfiles ${_arch})
+  for _pkgfile in ${_pkgfiles[@]}; do
+    [ -f out/${_pkgfile} ] && _skip_build=1
+  done
+
+  if [ ${_skip_build} -gt 0 ]; then
+    warning "All/Some packages for ${_arch} already built, check out/ and clean"
+    continue
+  fi
+
+  rsync -r $(pwd) ${_bot}:archpower/pkg
+  ssh ${_bot} "cd archpower/pkg/${pkgname}; ${_makechrootpkg_prefix} makechrootpkg -cu -r \${HOME}/archpower/buildroot"
+  rsync ${_bot}:archpower/pkg/${pkgname}/*.pkg.tar.zst \
+             ${_bot}:archpower/pkg/${pkgname}/*.log out/
+  ssh ${_bot} "rm -rf archpower/pkg/${pkgname}"
+done
