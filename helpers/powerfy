@@ -6,7 +6,7 @@ source /usr/share/makepkg/util/message.sh
 _myarch=${CARCH}
 
 if [ -z $(printf '%s\n' "${arch[@]}" | grep "^${_myarch}$") ]; then
-  _hasarch="${arch[@]} ${_myarch}"
+  _hasarch="${arch[@]} ${_myarch} powerpc"
 else
   _hasarch="${arch[@]}"
 fi

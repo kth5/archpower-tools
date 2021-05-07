@@ -2,6 +2,15 @@
 
 source /usr/share/makepkg/util.sh
 
+# check if messages are to be printed using color
+if [[ -t 2 && "$TERM" != dumb ]]; then
+  colorize
+else
+  # shellcheck disable=2034
+  declare -gr ALL_OFF='' BOLD='' BLUE='' GREEN='' RED='' YELLOW=''
+fi
+
+
 buildbot_powerpc64le=(
   'buildbot@192.168.122.131'
 )
@@ -15,10 +24,14 @@ if [ ! -f PKGBUILD ]; then
   exit 1
 fi
 
+# Pass all arguments after -- right to makepkg
+_makepkg_args+=("${@:$OPTIND}")
+
 source PKGBUILD
 
 for _arch in ${arch[@]}; do
   _skip_arch=0
+
   unset _bot
   unset _makechrootpkg_prefix
   case ${_arch} in
@@ -53,7 +66,8 @@ for _arch in ${arch[@]}; do
   fi
 
   rsync -r --exclude=out/ $(pwd) ${_bot}:archpower/pkg
-  ssh ${_bot} "cd archpower/pkg/${pkgname}; ${_makechrootpkg_prefix} makechrootpkg -cu -r \${HOME}/archpower/buildroot"
+  ssh ${_bot} "source archpower/pkg/${pkgname}/PKGBUILD; for key in \${validpgpkeys[@]}; do gpg --keyserver keyserver.ubuntu.com --recv-keys \${key} 2>/dev/null; done"
+  ssh ${_bot} "cd archpower/pkg/${pkgname}; ${_makechrootpkg_prefix} makechrootpkg -cuT -r \${HOME}/archpower/buildroot ${_makepkg_args[@]}"
   rsync ${_bot}:archpower/pkg/${pkgname}/*.pkg.tar.zst \
              ${_bot}:archpower/pkg/${pkgname}/*.log out/
   ssh ${_bot} "rm -rf archpower/pkg/${pkgname}"
